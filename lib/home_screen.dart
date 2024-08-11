@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -171,6 +172,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: const Color.fromARGB(255, 48, 53, 48),
                             ),
                           ),
+                        ),
+                        child: LiquidCustomProgressIndicator(
+                          value: 0.6,
+                          valueColor: AlwaysStoppedAnimation(Colors.blue),
+                          backgroundColor: Colors.white,
+                          direction: Axis.vertical,
+                          shapePath: _buildBoatPath(screenWidth / 3 * 2 - 80),
                         ),
                       ),
                       Container(
@@ -513,5 +521,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  _buildBoatPath(double tankWidth) {
+    final path = Path();
+    path.addRect(Rect.fromLTWH(0, 0, tankWidth, 225));
+    return path;
   }
 }
