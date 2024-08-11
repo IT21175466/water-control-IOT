@@ -242,9 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Spacer(),
               ],
             ),
-            SizedBox(
-              height: 10,
-            ),
+            Spacer(),
             Row(
               children: [
                 Container(
@@ -339,86 +337,178 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 10,
             ),
-            Container(
-              height: 65,
-              width: screenWidth,
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 113, 153, 255),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'මිශ්‍ර ජලය',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-                    ),
+            Row(
+              children: [
+                Container(
+                  height: 120,
+                  width: screenWidth / 2 - 15,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 113, 153, 255),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    'ලබාගන්න',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Image.asset(
-                      'assets/icons/mix_water.png',
-                      height: 45,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              height: 50,
-              width: screenWidth,
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Column(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Spacer(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Image.asset(
+                          'assets/icons/mix_water.png',
+                          height: 45,
+                        ),
+                      ),
                       Text(
-                        'සියලුම ජල කරාම වසා දමන්න.',
+                        'මිශ්‍ර ජලය',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'ලබාගන්න',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  height: 120,
+                  width: screenWidth / 2 - 15,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Image.asset(
+                          'assets/icons/water_closed.png',
+                          height: 45,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'සියලුම කරාම',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'වසා දමන්න',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       Spacer(),
                     ],
                   ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Image.asset(
-                      'assets/icons/water_closed.png',
-                      height: 30,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+
+            // Container(
+            //   height: 65,
+            //   width: screenWidth,
+            //   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            //   decoration: BoxDecoration(
+            //     color: Color.fromARGB(255, 113, 153, 255),
+            //     borderRadius: BorderRadius.circular(15),
+            //   ),
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.end,
+            //     children: [
+            //       Text(
+            //         'මිශ්‍ර ජලය',
+            //         style: TextStyle(
+            //           color: Colors.white,
+            //           fontSize: 25,
+            //           fontWeight: FontWeight.w700,
+            //         ),
+            //       ),
+            //       SizedBox(
+            //         width: 5,
+            //       ),
+            //       Text(
+            //         'ලබාගන්න',
+            //         style: TextStyle(
+            //           color: Colors.white,
+            //           fontSize: 13,
+            //           fontWeight: FontWeight.w500,
+            //         ),
+            //       ),
+            //       Spacer(),
+            //       Align(
+            //         alignment: Alignment.centerRight,
+            //         child: Image.asset(
+            //           'assets/icons/mix_water.png',
+            //           height: 45,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 10,
+            // ),
+            // Container(
+            //   height: 50,
+            //   width: screenWidth,
+            //   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            //   decoration: BoxDecoration(
+            //     color: Colors.red,
+            //     borderRadius: BorderRadius.circular(15),
+            //   ),
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.end,
+            //     children: [
+            //       Column(
+            //         children: [
+            //           Spacer(),
+            //           Text(
+            //             'සියලුම ජල කරාම වසා දමන්න.',
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //               fontSize: 13,
+            //               fontWeight: FontWeight.w400,
+            //             ),
+            //           ),
+            //           Spacer(),
+            //         ],
+            //       ),
+            //       Spacer(),
+            //       Align(
+            //         alignment: Alignment.centerRight,
+            //         child: Image.asset(
+            //           'assets/icons/water_closed.png',
+            //           height: 30,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            Spacer(),
           ],
         ),
       ),
