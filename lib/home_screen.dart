@@ -13,14 +13,60 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final currentHour = DateTime.now().hour;
   String greeting = '';
+  String status = '';
 
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   double waterLevel = 0;
   double tankHeightInCm = 6;
 
+  //
+  int waterBoardWater = 0;
+  int wellWater = 0;
+
+  void gettingStatus() {
+    DatabaseReference _databaseReferenceWaterBoard =
+        FirebaseDatabase.instance.ref("waterBoard");
+
+    DatabaseReference _databaseReferenceWellWater =
+        FirebaseDatabase.instance.ref("well");
+
+    _databaseReferenceWaterBoard.onValue.listen(
+      (event) {
+        setState(() {
+          waterBoardWater = int.parse(event.snapshot.value.toString());
+        });
+      },
+    );
+
+    _databaseReferenceWellWater.onValue.listen(
+      (event) {
+        setState(() {
+          wellWater = int.parse(event.snapshot.value.toString());
+        });
+      },
+    );
+
+    if (waterBoardWater == 0 && wellWater == 0) {
+      setState(() {
+        status = 'සියලුම කරාම වසා ඇත!';
+      });
+    } else {
+      if (waterBoardWater == 0 && wellWater == 1) {
+        setState(() {
+          status = 'ලිං ජලය ලබා ගනිමින් පවතී.';
+        });
+      } else if (waterBoardWater == 1 && wellWater == 0) {
+        setState(() {
+          status = 'නල ජලය ලබා ගනිමින් පවතී.';
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
     if (currentHour < 12) {
       greeting = 'Good Morning';
     } else if (currentHour < 18) {
@@ -34,71 +80,72 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                image: DecorationImage(
-                  image: AssetImage('assets/images/profile_img.jpeg'),
-                  fit: BoxFit.cover,
-                ),
+    gettingStatus();
+    return FutureBuilder(
+        future: _fApp,
+        builder: (context, snapshot) {
+          DatabaseReference _databaseReference =
+              FirebaseDatabase.instance.ref("level");
+
+          _databaseReference.onValue.listen(
+            (event) {
+              setState(() {
+                waterLevel = (tankHeightInCm -
+                        double.parse(event.snapshot.value.toString())) /
+                    tankHeightInCm;
+              });
+            },
+          );
+          return Scaffold(
+            appBar: AppBar(
+              title: Row(
+                children: [
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/profile_img.jpeg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hi, ${greeting}',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        'IOT Water Manager',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.menu,
+                  ),
+                ],
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hi, ${greeting}',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  'IOT Water Manager',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 10,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-            Spacer(),
-            Icon(
-              Icons.menu,
-            ),
-          ],
-        ),
-      ),
-      body: FutureBuilder(
-          future: _fApp,
-          builder: (context, snapshot) {
-            DatabaseReference _databaseReference =
-                FirebaseDatabase.instance.ref("level");
-
-            _databaseReference.onValue.listen(
-              (event) {
-                setState(() {
-                  waterLevel = (tankHeightInCm -
-                          double.parse(event.snapshot.value.toString())) /
-                      tankHeightInCm;
-                });
-              },
-            );
-            return Container(
+            body: Container(
               height: screenHeight,
               width: screenWidth,
               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -137,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Text(
-                              'ජලය ලබා ගනිමින් පවතී.',
+                              status,
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontSize: 18,
@@ -284,43 +331,79 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         height: 120,
                         width: screenWidth / 2 - 15,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
                         decoration: BoxDecoration(
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Stack(
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Image.asset(
-                                'assets/icons/water_well.png',
-                                height: 45,
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Image.asset(
+                                      'assets/icons/water_well.png',
+                                      height: 45,
+                                    ),
+                                  ),
+                                  Text(
+                                    'ලිං ජලය',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Text(
+                                    'ලබාගන්න',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              'ලිං ජලය',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              'ලබාගන්න',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
+                            wellWater == 1
+                                ? Container(
+                                    height: 120,
+                                    width: screenWidth / 2 - 15,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.7),
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                        color: wellWater == 1
+                                            ? const Color.fromARGB(
+                                                255, 11, 105, 245)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset(
+                                          'assets/icons/selected.png',
+                                          height: 35,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : SizedBox(),
                           ],
                         ),
                       ),
@@ -328,43 +411,79 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         height: 120,
                         width: screenWidth / 2 - 15,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 11, 105, 245),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Stack(
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Image.asset(
-                                'assets/icons/gate_valve.png',
-                                height: 45,
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Image.asset(
+                                      'assets/icons/gate_valve.png',
+                                      height: 45,
+                                    ),
+                                  ),
+                                  Text(
+                                    'නල ජලය',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Text(
+                                    'ලබාගන්න',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              'නල ජලය',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              'ලබාගන්න',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
+                            waterBoardWater == 1
+                                ? Container(
+                                    height: 120,
+                                    width: screenWidth / 2 - 15,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.7),
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                        color: waterBoardWater == 1
+                                            ? const Color.fromARGB(
+                                                255, 11, 105, 245)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset(
+                                          'assets/icons/selected.png',
+                                          height: 35,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : SizedBox(),
                           ],
                         ),
                       ),
@@ -373,96 +492,96 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        height: 120,
-                        width: screenWidth / 2 - 15,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 113, 153, 255),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Image.asset(
-                                'assets/icons/mix_water.png',
-                                height: 45,
-                              ),
-                            ),
-                            Text(
-                              'මිශ්‍ර ජලය',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              'ලබාගන්න',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Spacer(),
-                      Container(
-                        height: 120,
-                        width: screenWidth / 2 - 15,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Image.asset(
-                                'assets/icons/water_closed.png',
-                                height: 45,
-                              ),
-                            ),
-                            Spacer(),
-                            Text(
-                              'සියලුම කරාම',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              'වසා දමන්න',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Spacer(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Container(
+                  //       height: 120,
+                  //       width: screenWidth / 2 - 15,
+                  //       padding: EdgeInsets.symmetric(horizontal: 15),
+                  //       decoration: BoxDecoration(
+                  //         color: Color.fromARGB(255, 113, 153, 255),
+                  //         borderRadius: BorderRadius.circular(15),
+                  //       ),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           SizedBox(
+                  //             height: 10,
+                  //           ),
+                  //           Align(
+                  //             alignment: Alignment.topRight,
+                  //             child: Image.asset(
+                  //               'assets/icons/mix_water.png',
+                  //               height: 45,
+                  //             ),
+                  //           ),
+                  //           Text(
+                  //             'මිශ්‍ර ජලය',
+                  //             style: TextStyle(
+                  //               color: Colors.white,
+                  //               fontSize: 23,
+                  //               fontWeight: FontWeight.w700,
+                  //             ),
+                  //           ),
+                  //           Text(
+                  //             'ලබාගන්න',
+                  //             style: TextStyle(
+                  //               color: Colors.white,
+                  //               fontSize: 13,
+                  //               fontWeight: FontWeight.w500,
+                  //             ),
+                  //           ),
+                  //           SizedBox(
+                  //             height: 5,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Spacer(),
+                  //     Container(
+                  //       height: 120,
+                  //       width: screenWidth / 2 - 15,
+                  //       padding: EdgeInsets.symmetric(horizontal: 15),
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.redAccent,
+                  //         borderRadius: BorderRadius.circular(15),
+                  //       ),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           SizedBox(
+                  //             height: 10,
+                  //           ),
+                  //           Align(
+                  //             alignment: Alignment.topRight,
+                  //             child: Image.asset(
+                  //               'assets/icons/water_closed.png',
+                  //               height: 45,
+                  //             ),
+                  //           ),
+                  //           Spacer(),
+                  //           Text(
+                  //             'සියලුම කරාම',
+                  //             style: TextStyle(
+                  //               color: Colors.white,
+                  //               fontSize: 20,
+                  //               fontWeight: FontWeight.w700,
+                  //             ),
+                  //           ),
+                  //           Text(
+                  //             'වසා දමන්න',
+                  //             style: TextStyle(
+                  //               color: Colors.white,
+                  //               fontSize: 13,
+                  //               fontWeight: FontWeight.w500,
+                  //             ),
+                  //           ),
+                  //           Spacer(),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   // Container(
                   //   height: 65,
@@ -508,48 +627,125 @@ class _HomeScreenState extends State<HomeScreen> {
                   // SizedBox(
                   //   height: 10,
                   // ),
-                  // Container(
-                  //   height: 50,
-                  //   width: screenWidth,
-                  //   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.red,
-                  //     borderRadius: BorderRadius.circular(15),
-                  //   ),
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.end,
-                  //     children: [
-                  //       Column(
-                  //         children: [
-                  //           Spacer(),
-                  //           Text(
-                  //             'සියලුම ජල කරාම වසා දමන්න.',
-                  //             style: TextStyle(
-                  //               color: Colors.white,
-                  //               fontSize: 13,
-                  //               fontWeight: FontWeight.w400,
-                  //             ),
-                  //           ),
-                  //           Spacer(),
-                  //         ],
-                  //       ),
-                  //       Spacer(),
-                  //       Align(
-                  //         alignment: Alignment.centerRight,
-                  //         child: Image.asset(
-                  //           'assets/icons/water_closed.png',
-                  //           height: 30,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  Container(
+                    height: 60,
+                    width: screenWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: waterBoardWater == 0 && wellWater == 0
+                            ? const Color.fromARGB(255, 11, 105, 245)
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        waterBoardWater == 0 && wellWater == 0
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    Column(
+                                      children: [
+                                        Spacer(),
+                                        Text(
+                                          'සියලුම ජල කරාම වසා දමන්න.',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    Spacer(),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Image.asset(
+                                        'assets/icons/water_closed.png',
+                                        height: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Spacer(),
+                                        Text(
+                                          'සියලුම ජල කරාම වසා දමන්න.',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Image.asset(
+                                        'assets/icons/water_closed.png',
+                                        height: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                        waterBoardWater == 0 && wellWater == 0
+                            ? Container(
+                                height: 60,
+                                width: screenWidth,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    color: waterBoardWater == 1
+                                        ? const Color.fromARGB(
+                                            255, 11, 105, 245)
+                                        : Colors.transparent,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/selected.png',
+                                      height: 35,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                  ),
                   Spacer(),
                 ],
               ),
-            );
-          }),
-    );
+            ),
+          );
+        });
   }
 
   _buildBoatPath(double tankWidth) {
