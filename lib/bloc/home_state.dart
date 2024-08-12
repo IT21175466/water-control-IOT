@@ -13,3 +13,12 @@ class AuthenticatingErrorState extends HomeState {
   final String error;
   AuthenticatingErrorState({required this.error});
 }
+
+class WaterRequestingState extends HomeState {}
+
+class WaterRequestingSucessState extends HomeState {}
+
+class WaterRequestingErrorState extends HomeState {
+  final String error;
+  WaterRequestingErrorState({required this.error});
+}

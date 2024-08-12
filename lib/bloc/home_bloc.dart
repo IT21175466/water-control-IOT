@@ -11,6 +11,7 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<AuthenticatingInitialEvent>(authenticatingInitialEvent);
+    on<WaterRequesingEvent>(waterRequesingEvent);
   }
 
   FutureOr<void> authenticatingInitialEvent(
@@ -28,6 +29,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(AuthenticatingErrorState(error: e.code));
     } catch (e) {
       emit(AuthenticatingErrorState(error: e.toString()));
+    }
+  }
+
+  FutureOr<void> waterRequesingEvent(
+      WaterRequesingEvent event, Emitter<HomeState> emit) async {
+    HomeRepository homeRepo = HomeRepository();
+    try {
+      emit(WaterRequestingState());
+      await homeRepo.updateWaterState(event.wellWater, event.waterBoard);
+      //await Future.delayed(Duration(seconds: 2));
+      emit(WaterRequestingSucessState());
+    } catch (e) {
+      emit(WaterRequestingErrorState(error: e.toString()));
     }
   }
 }
