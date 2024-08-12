@@ -193,11 +193,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        Spacer(),
-                        Image.asset(
-                          'assets/icons/check_mark.png',
-                          height: 30,
-                        ),
+                        // Spacer(),
+                        // Image.asset(
+                        //   'assets/icons/check_mark.png',
+                        //   height: 30,
+                        // ),
                       ],
                     ),
                   ),
@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.7),
+                                      color: Colors.white.withOpacity(0.6),
                                       borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
                                         color: wellWater == 1
