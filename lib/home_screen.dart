@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'වත්මන් තත්ත්වය',
+                              'වත්මන් තත්ත්වය:',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 13,
