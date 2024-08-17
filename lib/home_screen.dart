@@ -53,17 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
           isLoading = false;
         } else if (state is WaterRequestingErrorState) {
           isLoading = false;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${state.error}',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
         }
       },
       builder: (context, state) {
