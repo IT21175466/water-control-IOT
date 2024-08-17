@@ -27,50 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isLoading = false;
 
-  //
-  int waterBoardWater = 0;
-  int wellWater = 0;
-
-  void gettingStatus() {
-    DatabaseReference _databaseReferenceWaterBoard =
-        FirebaseDatabase.instance.ref("waterBoard");
-
-    DatabaseReference _databaseReferenceWellWater =
-        FirebaseDatabase.instance.ref("well");
-
-    _databaseReferenceWaterBoard.onValue.listen(
-      (event) {
-        setState(() {
-          waterBoardWater = int.parse(event.snapshot.value.toString());
-        });
-      },
-    );
-
-    _databaseReferenceWellWater.onValue.listen(
-      (event) {
-        setState(() {
-          wellWater = int.parse(event.snapshot.value.toString());
-        });
-      },
-    );
-
-    if (waterBoardWater == 0 && wellWater == 0) {
-      setState(() {
-        status = 'සියලුම කරාම වසා ඇත!';
-      });
-    } else {
-      if (waterBoardWater == 0 && wellWater == 1) {
-        setState(() {
-          status = 'ලිං ජලය ලබා ගනිමින් පවතී.';
-        });
-      } else if (waterBoardWater == 1 && wellWater == 0) {
-        setState(() {
-          status = 'නල ජලය ලබා ගනිමින් පවතී.';
-        });
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -88,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    gettingStatus();
     return BlocConsumer<HomeBloc, HomeState>(
       bloc: _homeBloc,
       listener: (context, state) {
@@ -185,63 +140,63 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            height: 60,
-                            width: screenWidth,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                color: Colors.grey.withOpacity(0.6),
-                              ),
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/current_status_BG.jpg'),
-                                fit: BoxFit.cover,
-                                opacity: 0.5,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'වත්මන් තත්ත්වය:',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    Text(
-                                      status,
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // Spacer(),
-                                // Image.asset(
-                                //   'assets/icons/check_mark.png',
-                                //   height: 30,
-                                // ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
                             height: 15,
                           ),
+                          // Container(
+                          //   height: 60,
+                          //   width: screenWidth,
+                          //   padding: EdgeInsets.symmetric(horizontal: 10),
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(15),
+                          //     border: Border.all(
+                          //       color: Colors.grey.withOpacity(0.6),
+                          //     ),
+                          //     image: DecorationImage(
+                          //       image: AssetImage(
+                          //           'assets/images/current_status_BG.jpg'),
+                          //       fit: BoxFit.cover,
+                          //       opacity: 0.5,
+                          //     ),
+                          //   ),
+                          //   child: Row(
+                          //     children: [
+                          //       Column(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           Text(
+                          //             'වත්මන් තත්ත්වය:',
+                          //             style: TextStyle(
+                          //               color: Colors.black,
+                          //               fontSize: 13,
+                          //             ),
+                          //           ),
+                          //           Text(
+                          //             status,
+                          //             style: TextStyle(
+                          //               color: Colors.blue,
+                          //               fontSize: 18,
+                          //               fontWeight: FontWeight.w700,
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       // Spacer(),
+                          //       // Image.asset(
+                          //       //   'assets/icons/check_mark.png',
+                          //       //   height: 30,
+                          //       // ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 15,
+                          // ),
                           Row(
                             children: [
                               Container(
                                 width: screenWidth / 3 * 2 - 40,
-                                height: 300,
+                                height: 350,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -264,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Container(
-                                      height: 225,
+                                      height: 275,
                                       width: screenWidth / 3 * 2 - 78,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -367,21 +322,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  if (wellWater == 1 && waterBoardWater == 0) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'ලිං ජලය ලැබෙමින් පවතී.',
-                                          style: TextStyle(),
-                                        ),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 11, 105, 245),
-                                      ),
-                                    );
-                                  } else {
-                                    _homeBloc.add(WaterRequesingEvent(
-                                        wellWater: 1, waterBoard: 0));
-                                  }
+                                  _homeBloc.add(WaterRequesingEvent(
+                                      wellWater: 1, waterBoard: 0));
                                 },
                                 child: Container(
                                   height: 120,
@@ -431,38 +373,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
                                       ),
-                                      wellWater == 1
-                                          ? Container(
-                                              height: 120,
-                                              width: screenWidth / 2 - 15,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.6),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                border: Border.all(
-                                                  color: wellWater == 1
-                                                      ? const Color.fromARGB(
-                                                          255, 11, 105, 245)
-                                                      : Colors.transparent,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/icons/selected.png',
-                                                    height: 35,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : SizedBox(),
                                     ],
                                   ),
                                 ),
@@ -470,21 +380,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Spacer(),
                               GestureDetector(
                                 onTap: () {
-                                  if (wellWater == 0 && waterBoardWater == 1) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'නල ජලය ලැබෙමින් පවතී.',
-                                          style: TextStyle(),
-                                        ),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 11, 105, 245),
-                                      ),
-                                    );
-                                  } else {
-                                    _homeBloc.add(WaterRequesingEvent(
-                                        wellWater: 0, waterBoard: 1));
-                                  }
+                                  _homeBloc.add(WaterRequesingEvent(
+                                      wellWater: 0, waterBoard: 1));
                                 },
                                 child: Container(
                                   height: 120,
@@ -535,44 +432,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
                                       ),
-                                      waterBoardWater == 1
-                                          ? Container(
-                                              height: 120,
-                                              width: screenWidth / 2 - 15,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.7),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                border: Border.all(
-                                                  color: waterBoardWater == 1
-                                                      ? const Color.fromARGB(
-                                                          255, 11, 105, 245)
-                                                      : Colors.transparent,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/icons/selected.png',
-                                                    height: 35,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : SizedBox(),
                                     ],
                                   ),
                                 ),
                               ),
                             ],
                           ),
+
                           SizedBox(
                             height: 10,
                           ),
@@ -713,21 +579,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           // ),
                           GestureDetector(
                             onTap: () {
-                              if (wellWater == 0 && waterBoardWater == 0) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'සියල්ල වසා ඇත!',
-                                      style: TextStyle(),
-                                    ),
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 11, 105, 245),
-                                  ),
-                                );
-                              } else {
-                                _homeBloc.add(WaterRequesingEvent(
-                                    wellWater: 0, waterBoard: 0));
-                              }
+                              _homeBloc.add(WaterRequesingEvent(
+                                  wellWater: 0, waterBoard: 0));
                             },
                             child: Container(
                               height: 60,
@@ -736,120 +589,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: waterBoardWater == 0 && wellWater == 0
-                                      ? const Color.fromARGB(255, 11, 105, 245)
-                                      : Colors.transparent,
+                                  color: Colors.transparent,
                                 ),
                               ),
                               child: Stack(
                                 children: [
-                                  waterBoardWater == 0 && wellWater == 0
-                                      ? Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 10),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width: 50,
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Spacer(),
+                                            Text(
+                                              'සියලුම ජල කරාම වසා දමන්න.',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
                                               ),
-                                              Column(
-                                                children: [
-                                                  Spacer(),
-                                                  Text(
-                                                    'සියලුම ජල කරාම වසා දමන්න.',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                ],
-                                              ),
-                                              Spacer(),
-                                              Spacer(),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Image.asset(
-                                                  'assets/icons/water_closed.png',
-                                                  height: 40,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 10),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  Spacer(),
-                                                  Text(
-                                                    'සියලුම ජල කරාම වසා දමන්න.',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                ],
-                                              ),
-                                              Spacer(),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Image.asset(
-                                                  'assets/icons/water_closed.png',
-                                                  height: 40,
-                                                ),
-                                              ),
-                                            ],
+                                            ),
+                                            Spacer(),
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        Spacer(),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Image.asset(
+                                            'assets/icons/water_closed.png',
+                                            height: 40,
                                           ),
                                         ),
-                                  waterBoardWater == 0 && wellWater == 0
-                                      ? Container(
-                                          height: 60,
-                                          width: screenWidth,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.white.withOpacity(0.5),
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            border: Border.all(
-                                              color: waterBoardWater == 1
-                                                  ? const Color.fromARGB(
-                                                      255, 11, 105, 245)
-                                                  : Colors.transparent,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Image.asset(
-                                                'assets/icons/selected.png',
-                                                height: 35,
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : SizedBox(),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -888,7 +667,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _buildBoatPath(double tankWidth) {
     final path = Path();
-    path.addRect(Rect.fromLTWH(0, 0, tankWidth, 225));
+    path.addRect(Rect.fromLTWH(0, 0, tankWidth, 275));
     return path;
   }
 }

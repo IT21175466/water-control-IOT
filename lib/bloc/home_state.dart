@@ -7,7 +7,10 @@ final class HomeInitial extends HomeState {}
 
 class AuthenticatingInitialState extends HomeState {}
 
-class AuthenticatingSucessState extends HomeState {}
+class AuthenticatingSucessState extends HomeState {
+  final String featchedIP;
+  AuthenticatingSucessState({required this.featchedIP});
+}
 
 class AuthenticatingErrorState extends HomeState {
   final String error;
