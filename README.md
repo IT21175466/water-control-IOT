@@ -1,12 +1,3 @@
-# watercontroliot
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-
 # IOT Smart Water Control System using Arduino Node MCU ESP32 with Flutter Mobile Application
 
 This project is an Internet of Things (IoT) system designed to monitor and control water usage efficiently. The system integrates various components to automate water flow and track water levels, ensuring optimal resource management. The solution features a mobile app built with Flutter for remote monitoring and control.
